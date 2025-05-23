@@ -2,3 +2,5 @@ This is a basic Arduino demo of the M5Stack Tab5 using display and touch feature
 It uses LVGL as gui framework and a Square Line Studio project is included.
 Other peripheral features - audio, camera, gyro etc will be added soon.
 
+Please see the notes at the top of the .ino file
+
