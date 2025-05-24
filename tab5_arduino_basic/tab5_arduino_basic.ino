@@ -32,7 +32,7 @@ This demo uses a software rotate in order to give us landscape mode (disp_drv.ro
 I've not been able to find the make and model of the display unit used in the Tab5 so I can't be sure if it supports a hardware accelerated rotation.
 The display driver chip is ili9881c with native portrait orientation.
 
-A Square Line Studio project is included so that you can experiment with your own exported UI files.
+A Square Line Studio V1.5.1 project is included so that you can experiment with your own exported UI files.
 
 */
 
