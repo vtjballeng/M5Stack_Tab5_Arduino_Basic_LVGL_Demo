@@ -20,11 +20,12 @@ lv_conf.h:
 Build Options:
 
 Board: "ESP32P4 Dev Module"
+USB CDC on boot: "Enabled"
 Flash Size: "16MB (128Mb)"
-Partition Scheme: "16M Flash (3MB APP/9.9MB FATFS)"
+Partition Scheme: "Custom" (the supplied partitions.csv file allows almost full use of the flash for the main app)
 PSRAM: "Enabled"
 Upload Mode: "UART / Hardware CDC"
-USB Mode: "USB-OTG (TinyUSB)"
+USB Mode: "Hardware CDC and JTAG"
 
 Notes:
 
@@ -104,7 +105,7 @@ void setup()
     /*Initialize Tab5 MIPI-DSI display*/
     display.init();
 
-
+    Serial.begin(115200);//for debug
 
     /*Initialize LVGL*/
     lv_init();
