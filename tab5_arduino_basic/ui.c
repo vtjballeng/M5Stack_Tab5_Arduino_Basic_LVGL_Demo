@@ -29,6 +29,24 @@ lv_obj_t * ui_SecondSpinbox;
 lv_obj_t * ui_TimeSettingPanel;
 lv_obj_t * ui_ApplyTimeBtn;
 lv_obj_t * ui_ApplyTimeBtnLabel;
+lv_obj_t * ui_AlarmLabel;
+lv_obj_t * ui_AlarmTimeLabel;
+lv_obj_t * ui_AlarmSwitch;
+lv_obj_t * ui_SetAlarmBtn;
+lv_obj_t * ui_SetAlarmBtnLabel;
+lv_obj_t * ui_AlarmSettingPanel;
+lv_obj_t * ui_AlarmHourSpinbox;
+lv_obj_t * ui_AlarmMinuteSpinbox;
+lv_obj_t * ui_ApplyAlarmBtn;
+lv_obj_t * ui_ApplyAlarmBtnLabel;
+lv_obj_t * ui_AlarmVolumeSlider;
+lv_obj_t * ui_AlarmVolumeLabel;
+lv_obj_t * ui_WakeUpPanel;
+lv_obj_t * ui_WakeUpLabel;
+lv_obj_t * ui_SnoozeBtn;
+lv_obj_t * ui_SnoozeBtnLabel;
+lv_obj_t * ui_StopBtn;
+lv_obj_t * ui_StopBtnLabel;
 // CUSTOM VARIABLES
 
 // EVENTS

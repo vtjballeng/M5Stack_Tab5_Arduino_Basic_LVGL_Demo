@@ -46,6 +46,24 @@ extern lv_obj_t * ui_SecondSpinbox;
 extern lv_obj_t * ui_TimeSettingPanel;
 extern lv_obj_t * ui_ApplyTimeBtn;
 extern lv_obj_t * ui_ApplyTimeBtnLabel;
+extern lv_obj_t * ui_AlarmLabel;
+extern lv_obj_t * ui_AlarmTimeLabel;
+extern lv_obj_t * ui_AlarmSwitch;
+extern lv_obj_t * ui_SetAlarmBtn;
+extern lv_obj_t * ui_SetAlarmBtnLabel;
+extern lv_obj_t * ui_AlarmSettingPanel;
+extern lv_obj_t * ui_AlarmHourSpinbox;
+extern lv_obj_t * ui_AlarmMinuteSpinbox;
+extern lv_obj_t * ui_ApplyAlarmBtn;
+extern lv_obj_t * ui_ApplyAlarmBtnLabel;
+extern lv_obj_t * ui_AlarmVolumeSlider;
+extern lv_obj_t * ui_AlarmVolumeLabel;
+extern lv_obj_t * ui_WakeUpPanel;
+extern lv_obj_t * ui_WakeUpLabel;
+extern lv_obj_t * ui_SnoozeBtn;
+extern lv_obj_t * ui_SnoozeBtnLabel;
+extern lv_obj_t * ui_StopBtn;
+extern lv_obj_t * ui_StopBtnLabel;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -56,6 +74,7 @@ extern lv_obj_t * ui____initial_actions0;
 LV_FONT_DECLARE(ui_font_conthrax24);
 LV_FONT_DECLARE(ui_font_Font1);
 LV_FONT_DECLARE(ui_font_sevenSeg);
+LV_FONT_DECLARE(ui_font_sevenSeg150);
 
 // UI INIT
 void ui_init(void);

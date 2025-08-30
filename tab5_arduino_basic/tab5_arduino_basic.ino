@@ -55,6 +55,22 @@ uint8_t minutes = 0;
 uint8_t seconds = 0;
 unsigned long lastSecondUpdate = 0;
 bool timeSettingPanelVisible = false;
+
+// Alarm variables
+uint8_t alarmHours = 0;
+uint8_t alarmMinutes = 0;
+bool alarmEnabled = false;
+bool alarmTriggered = false;
+bool alarmSettingPanelVisible = false;
+uint8_t alarmVolume = 75;
+bool alarmFlashState = false;
+unsigned long lastFlashTime = 0;
+uint8_t snoozeMinutes = 10;
+bool alarmSnoozed = false;
+uint8_t snoozeTargetHour = 0;
+uint8_t snoozeTargetMinute = 0;
+unsigned long alarmStartTime = 0;
+const unsigned long alarmTimeout = 600000; // 10 minutes timeout
  
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t *buf;
@@ -139,6 +155,218 @@ void applyTimeButtonClicked(lv_event_t * e)
 }
 
 
+void updateAlarmDisplay()
+{
+    char alarmStr[8];  // Increased buffer size for safety
+    sprintf(alarmStr, "%02d:%02d", alarmHours, alarmMinutes);
+    lv_label_set_text(ui_AlarmTimeLabel, alarmStr);
+}
+
+
+void setAlarmButtonClicked(lv_event_t * e)
+{
+    alarmSettingPanelVisible = !alarmSettingPanelVisible;
+    if(alarmSettingPanelVisible) {
+        lv_obj_clear_flag(ui_AlarmSettingPanel, LV_OBJ_FLAG_HIDDEN);
+        lv_spinbox_set_value(ui_AlarmHourSpinbox, alarmHours);
+        lv_spinbox_set_value(ui_AlarmMinuteSpinbox, alarmMinutes);
+    } else {
+        lv_obj_add_flag(ui_AlarmSettingPanel, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
+
+void applyAlarmButtonClicked(lv_event_t * e)
+{
+    alarmHours = lv_spinbox_get_value(ui_AlarmHourSpinbox);
+    alarmMinutes = lv_spinbox_get_value(ui_AlarmMinuteSpinbox);
+    updateAlarmDisplay();
+    lv_obj_add_flag(ui_AlarmSettingPanel, LV_OBJ_FLAG_HIDDEN);
+    alarmSettingPanelVisible = false;
+    alarmTriggered = false; // Reset alarm trigger when setting new time
+}
+
+
+void checkAlarm()
+{
+    if(alarmEnabled) {
+        // Check for regular alarm time or snooze time
+        bool shouldTrigger = false;
+        
+        if(alarmSnoozed && !alarmTriggered) {
+            // Check if snooze time has been reached
+            if(hours == snoozeTargetHour && minutes == snoozeTargetMinute && seconds == 0) {
+                shouldTrigger = true;
+                alarmSnoozed = false; // Reset snooze
+            }
+        } else if(!alarmTriggered && !alarmSnoozed) {
+            // Check regular alarm time (only trigger once when we hit the exact time)
+            if(hours == alarmHours && minutes == alarmMinutes && seconds == 0) {
+                shouldTrigger = true;
+            }
+        }
+        
+        // Reset alarm trigger state when we're past the alarm time (for next day)
+        if(alarmTriggered && !alarmSnoozed) {
+            // If we're past the alarm time by at least 1 minute, reset for tomorrow
+            if(hours != alarmHours || minutes != alarmMinutes) {
+                // Only reset if we're not in the same minute as the alarm
+                alarmTriggered = false;
+                lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF6600), LV_PART_MAIN | LV_STATE_DEFAULT);
+                // Also hide the wake up panel if it's still visible
+                lv_obj_add_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        
+        if(shouldTrigger) {
+            alarmTriggered = true;
+            alarmStartTime = millis();  // Record when alarm started
+            // Show wake up panel
+            lv_obj_clear_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lastFlashTime = millis();
+            alarmFlashState = false;
+        }
+    }
+    
+    // Handle flashing effect when alarm is triggered
+    if(alarmTriggered) {
+        unsigned long currentTime = millis();
+        
+        // Check for timeout (10 minutes)
+        if(currentTime - alarmStartTime >= alarmTimeout) {
+            // Auto-stop the alarm after timeout
+            alarmTriggered = false;
+            alarmSnoozed = false;
+            lv_obj_add_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF6600), LV_PART_MAIN | LV_STATE_DEFAULT);
+        } else {
+            // Continue flashing
+            if(currentTime - lastFlashTime >= 500) { // Flash every 500ms
+                lastFlashTime = currentTime;
+                alarmFlashState = !alarmFlashState;
+                
+                if(alarmFlashState) {
+                    lv_obj_set_style_bg_color(ui_WakeUpPanel, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
+                } else {
+                    lv_obj_set_style_bg_color(ui_WakeUpPanel, lv_color_hex(0xFFFF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                }
+            }
+        }
+    }
+}
+
+
+void timePanelClickOutside(lv_event_t * e)
+{
+    lv_obj_t * target = lv_event_get_target(e);
+    lv_obj_t * current = lv_event_get_current_target(e);
+    
+    // If clicked on the panel background (not a child element)
+    if(target == current) {
+        lv_obj_add_flag(ui_TimeSettingPanel, LV_OBJ_FLAG_HIDDEN);
+        timeSettingPanelVisible = false;
+    }
+}
+
+
+void alarmPanelClickOutside(lv_event_t * e)
+{
+    lv_obj_t * target = lv_event_get_target(e);
+    lv_obj_t * current = lv_event_get_current_target(e);
+    
+    // If clicked on the panel background (not a child element)
+    if(target == current) {
+        lv_obj_add_flag(ui_AlarmSettingPanel, LV_OBJ_FLAG_HIDDEN);
+        alarmSettingPanelVisible = false;
+    }
+}
+
+
+bool isChildOf(lv_obj_t * child, lv_obj_t * parent)
+{
+    lv_obj_t * p = lv_obj_get_parent(child);
+    while(p != NULL) {
+        if(p == parent) return true;
+        p = lv_obj_get_parent(p);
+    }
+    return false;
+}
+
+void screenClickHandler(lv_event_t * e)
+{
+    // Close time setting panel if it's open
+    if(timeSettingPanelVisible) {
+        lv_obj_t * target = lv_event_get_target(e);
+        // Check if click is outside the panel and not on the Set Time button
+        if(!lv_obj_has_flag(ui_TimeSettingPanel, LV_OBJ_FLAG_HIDDEN) &&
+           !isChildOf(target, ui_TimeSettingPanel) &&
+           target != ui_TimeSettingPanel &&
+           target != ui_SetTimeBtn &&
+           !isChildOf(target, ui_SetTimeBtn)) {
+            lv_obj_add_flag(ui_TimeSettingPanel, LV_OBJ_FLAG_HIDDEN);
+            timeSettingPanelVisible = false;
+        }
+    }
+    
+    // Close alarm setting panel if it's open
+    if(alarmSettingPanelVisible) {
+        lv_obj_t * target = lv_event_get_target(e);
+        // Check if click is outside the panel and not on the Set Alarm button
+        if(!lv_obj_has_flag(ui_AlarmSettingPanel, LV_OBJ_FLAG_HIDDEN) &&
+           !isChildOf(target, ui_AlarmSettingPanel) &&
+           target != ui_AlarmSettingPanel &&
+           target != ui_SetAlarmBtn &&
+           !isChildOf(target, ui_SetAlarmBtn)) {
+            lv_obj_add_flag(ui_AlarmSettingPanel, LV_OBJ_FLAG_HIDDEN);
+            alarmSettingPanelVisible = false;
+        }
+    }
+}
+
+
+void snoozeButtonClicked(lv_event_t * e)
+{
+    if(alarmTriggered) {
+        // Calculate snooze time (current time + 10 minutes)
+        snoozeTargetMinute = minutes + snoozeMinutes;
+        snoozeTargetHour = hours;
+        
+        if(snoozeTargetMinute >= 60) {
+            snoozeTargetMinute -= 60;
+            snoozeTargetHour++;
+            if(snoozeTargetHour >= 24) {
+                snoozeTargetHour = 0;
+            }
+        }
+        
+        alarmSnoozed = true;
+        alarmTriggered = false;
+        
+        // Hide wake up panel
+        lv_obj_add_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
+        
+        // Reset alarm label color to orange
+        lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF6600), LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+}
+
+
+void stopButtonClicked(lv_event_t * e)
+{
+    if(alarmTriggered) {
+        alarmTriggered = false;
+        alarmSnoozed = false;
+        
+        // Hide wake up panel
+        lv_obj_add_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
+        
+        // Reset alarm label color to orange
+        lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF6600), LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+}
+
+
 
 void setup()
 {
@@ -181,8 +409,20 @@ void setup()
     lv_obj_add_event_cb(ui_SetTimeBtn, setTimeButtonClicked, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(ui_ApplyTimeBtn, applyTimeButtonClicked, LV_EVENT_CLICKED, NULL);
     
-    /*Initialize clock display*/
+    /*Setup alarm event handlers*/
+    lv_obj_add_event_cb(ui_SetAlarmBtn, setAlarmButtonClicked, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui_ApplyAlarmBtn, applyAlarmButtonClicked, LV_EVENT_CLICKED, NULL);
+    
+    /*Setup click-outside handlers*/
+    lv_obj_add_event_cb(ui_Screen1, screenClickHandler, LV_EVENT_CLICKED, NULL);
+    
+    /*Setup wake up screen event handlers*/
+    lv_obj_add_event_cb(ui_SnoozeBtn, snoozeButtonClicked, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui_StopBtn, stopButtonClicked, LV_EVENT_CLICKED, NULL);
+    
+    /*Initialize displays*/
     updateClockDisplay();
+    updateAlarmDisplay();
 }
 
 
@@ -223,6 +463,13 @@ void loop()
             }
         }
         updateClockDisplay();
+        checkAlarm();
     }
+    
+    // Handle alarm switch state
+    alarmEnabled = lv_obj_has_state(ui_AlarmSwitch, LV_STATE_CHECKED);
+    
+    // Handle alarm volume
+    alarmVolume = lv_slider_get_value(ui_AlarmVolumeSlider);
 
 }

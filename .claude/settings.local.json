@@ -9,7 +9,21 @@
       "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)",
       "Bash(arduino-cli:*)",
       "Bash(export PATH=$PATH:/mnt/c/Users/vtjba/Documents/GitHub/M5Stack_Tab5_Arduino_Basic_LVGL_Demo/bin)",
-      "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)"
+      "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)",
+      "Bash(powershell.exe:*)",
+      "Bash(lsusb:*)",
+      "Read(/dev/**)",
+      "Read(/home/vtjballeng/.arduino15/packages/esp32/hardware/esp32/3.2.1/**)",
+      "Bash(/mnt/c/Users/vtjba/Documents/GitHub/M5Stack_Tab5_Arduino_Basic_LVGL_Demo/bin/arduino-cli compile --fqbn esp32:esp32:esp32p4 --warnings all .)",
+      "Read(/home/vtjballeng/Arduino/libraries/**)",
+      "Read(/home/vtjballeng/Arduino/libraries/**)",
+      "WebFetch(domain:docs.m5stack.com)",
+      "Read(/home/vtjballeng/Arduino/libraries/**)",
+      "Read(/home/vtjballeng/Arduino/libraries/**)",
+      "Read(/home/vtjballeng/Arduino/libraries/M5GFX/src/**)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:docs.lvgl.io)"
     ],
     "deny": [],
     "ask": []
