@@ -40,6 +40,7 @@ A Square Line Studio V1.5.1 project is included so that you can experiment with 
 
 
 #include <M5GFX.h>
+#include <M5Unified.h>
 #include <lvgl.h>
 #include "ui.h"
 #include "pins_config.h"
@@ -71,6 +72,8 @@ uint8_t snoozeTargetHour = 0;
 uint8_t snoozeTargetMinute = 0;
 unsigned long alarmStartTime = 0;
 const unsigned long alarmTimeout = 600000; // 10 minutes timeout
+unsigned long lastBeepTime = 0;
+bool beepState = false;
  
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t *buf;
@@ -221,6 +224,8 @@ void checkAlarm()
         if(shouldTrigger) {
             alarmTriggered = true;
             alarmStartTime = millis();  // Record when alarm started
+            lastBeepTime = millis();
+            beepState = false;
             // Show wake up panel
             lv_obj_clear_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
             lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -238,6 +243,7 @@ void checkAlarm()
             // Auto-stop the alarm after timeout
             alarmTriggered = false;
             alarmSnoozed = false;
+            M5.Speaker.stop();  // Stop sound
             lv_obj_add_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
             lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF6600), LV_PART_MAIN | LV_STATE_DEFAULT);
         } else {
@@ -250,6 +256,17 @@ void checkAlarm()
                     lv_obj_set_style_bg_color(ui_WakeUpPanel, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
                 } else {
                     lv_obj_set_style_bg_color(ui_WakeUpPanel, lv_color_hex(0xFFFF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                }
+            }
+            
+            // Play alarm sound
+            if(currentTime - lastBeepTime >= 500) { // Beep cycle every 500ms
+                lastBeepTime = currentTime;
+                beepState = !beepState;
+                if(beepState) {
+                    M5.Speaker.tone(1000, 400);  // 1000Hz for 400ms
+                } else {
+                    M5.Speaker.stop();
                 }
             }
         }
@@ -346,6 +363,9 @@ void snoozeButtonClicked(lv_event_t * e)
         // Hide wake up panel
         lv_obj_add_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
         
+        // Stop sound
+        M5.Speaker.stop();
+        
         // Reset alarm label color to orange
         lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF6600), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
@@ -361,6 +381,9 @@ void stopButtonClicked(lv_event_t * e)
         // Hide wake up panel
         lv_obj_add_flag(ui_WakeUpPanel, LV_OBJ_FLAG_HIDDEN);
         
+        // Stop sound
+        M5.Speaker.stop();
+        
         // Reset alarm label color to orange
         lv_obj_set_style_text_color(ui_AlarmLabel, lv_color_hex(0xFF6600), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
@@ -370,8 +393,17 @@ void stopButtonClicked(lv_event_t * e)
 
 void setup()
 {
-    /*Initialize Tab5 MIPI-DSI display*/
-    display.init();
+    /*Initialize M5Unified (display and speaker)*/
+    auto cfg = M5.config();
+    cfg.internal_spk = true;  // Enable internal speaker
+    cfg.internal_mic = false; // Disable microphone
+    M5.begin(cfg);
+    
+    // Use M5's display instance for LVGL
+    display = M5.Display;
+    
+    // Set speaker volume
+    M5.Speaker.setVolume(128);  // 50% volume
 
     Serial.begin(115200);//for debug
 

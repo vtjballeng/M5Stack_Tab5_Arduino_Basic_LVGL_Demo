@@ -23,7 +23,8 @@
       "Read(/home/vtjballeng/Arduino/libraries/M5GFX/src/**)",
       "WebFetch(domain:github.com)",
       "WebSearch",
-      "WebFetch(domain:docs.lvgl.io)"
+      "WebFetch(domain:docs.lvgl.io)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": [],
     "ask": []
