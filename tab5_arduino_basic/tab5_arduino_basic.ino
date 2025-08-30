@@ -40,7 +40,7 @@ A Square Line Studio V1.5.1 project is included so that you can experiment with 
 
 
 #include <M5GFX.h>
-#include "lvgl.h"
+#include <lvgl.h>
 #include "ui.h"
 #include "pins_config.h"
 

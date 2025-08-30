@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Read(/mnt/c/Users/vtjba/Documents/Arduino/**)",
+      "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/lvgl/**)",
+      "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)",
+      "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)",
+      "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
