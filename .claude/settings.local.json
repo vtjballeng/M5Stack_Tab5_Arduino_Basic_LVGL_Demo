@@ -24,7 +24,8 @@
       "WebFetch(domain:github.com)",
       "WebSearch",
       "WebFetch(domain:docs.lvgl.io)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:docs.espressif.com)"
     ],
     "deny": [],
     "ask": []

@@ -43,12 +43,19 @@ A Square Line Studio V1.5.1 project is included so that you can experiment with 
 #include <M5Unified.h>
 #include <lvgl.h>
 #include "ui.h"
+#include "ui_usb.h"
 #include "pins_config.h"
+#include "usb_host_msc.h"
 
 M5GFX display;
+USBHostMSC usbHost;
 
 uint16_t count = 0;
 bool automate = false;
+
+// USB variables
+String currentUSBPath = "/";
+std::vector<USBFileEntry> currentFiles;
 
 // Clock variables
 uint8_t hours = 0;
@@ -74,6 +81,12 @@ unsigned long alarmStartTime = 0;
 const unsigned long alarmTimeout = 600000; // 10 minutes timeout
 unsigned long lastBeepTime = 0;
 bool beepState = false;
+
+// Forward declarations for USB event handlers
+void refreshUSBFileList();
+void usbRefreshClicked(lv_event_t * e);
+void usbBackClicked(lv_event_t * e);
+void usbFileSelected(lv_event_t * e);
  
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t *buf;
@@ -390,6 +403,90 @@ void stopButtonClicked(lv_event_t * e)
 }
 
 
+void refreshUSBFileList()
+{
+    if(!usbHost.isDriveConnected()) {
+        return;
+    }
+    
+    ui_usb_clear_file_list();
+    ui_usb_update_path(currentUSBPath.c_str());
+    
+    currentFiles = usbHost.listDirectory(currentUSBPath);
+    
+    // Add parent directory if not at root
+    if(currentUSBPath != "/") {
+        ui_usb_add_file_entry("..", true, 0);
+    }
+    
+    // Add files and directories
+    for(const auto& file : currentFiles) {
+        ui_usb_add_file_entry(file.name.c_str(), file.is_directory, file.size);
+    }
+    
+    if(currentFiles.empty() && currentUSBPath != "/") {
+        lv_obj_t * btn = lv_list_add_btn(ui_USBFileList, NULL, "(Empty directory)");
+        lv_obj_set_style_text_font(btn, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+}
+
+
+void usbRefreshClicked(lv_event_t * e)
+{
+    refreshUSBFileList();
+}
+
+
+void usbBackClicked(lv_event_t * e)
+{
+    if(currentUSBPath != "/") {
+        // Go to parent directory
+        int lastSlash = currentUSBPath.lastIndexOf('/');
+        if(lastSlash > 0) {
+            currentUSBPath = currentUSBPath.substring(0, lastSlash);
+        } else {
+            currentUSBPath = "/";
+        }
+        refreshUSBFileList();
+    }
+}
+
+
+void usbFileSelected(lv_event_t * e)
+{
+    lv_obj_t * btn = lv_event_get_target(e);
+    if(btn == ui_USBFileList) return;  // Clicked on list background
+    
+    // Get the label text
+    lv_obj_t * label = lv_obj_get_child(btn, -1);
+    const char * text = lv_label_get_text(label);
+    
+    // Check if it's the parent directory
+    if(strstr(text, "..") != NULL) {
+        usbBackClicked(e);
+        return;
+    }
+    
+    // Check if it's a directory
+    if(strstr(text, "[DIR]") != NULL) {
+        // Extract directory name
+        String dirName = String(text + 6);  // Skip "[DIR] "
+        
+        // Navigate into directory
+        if(currentUSBPath.endsWith("/")) {
+            currentUSBPath += dirName;
+        } else {
+            currentUSBPath += "/" + dirName;
+        }
+        refreshUSBFileList();
+    } else {
+        // It's a file - could implement file preview here
+        Serial.print("Selected file: ");
+        Serial.println(text);
+    }
+}
+
+
 
 void setup()
 {
@@ -434,8 +531,44 @@ void setup()
 
 
     /*Start UI*/
-    ui_init();   
+    ui_init();
+    
+    // Initialize USB UI panel
+    ui_usb_panel_init(ui_Screen1);
+    
     display.setBrightness(255);
+    
+    // Initialize USB Host
+    if(usbHost.begin()) {
+        Serial.println("USB Host initialized");
+        
+        // Set callbacks
+        usbHost.setOnDriveConnected([](USBDriveInfo info) {
+            Serial.println("USB Drive Connected!");
+            Serial.print("Vendor: "); Serial.println(info.vendor);
+            Serial.print("Product: "); Serial.println(info.product);
+            Serial.print("Capacity: "); Serial.print(info.capacity_mb); Serial.println(" MB");
+            
+            char info_str[256];
+            snprintf(info_str, sizeof(info_str), 
+                "Drive: %s %s\nCapacity: %u MB / Free: %u MB",
+                info.vendor.c_str(), info.product.c_str(),
+                info.capacity_mb, info.free_space_mb);
+            ui_usb_update_status(true, info_str);
+            
+            // List root directory
+            refreshUSBFileList();
+        });
+        
+        usbHost.setOnDriveDisconnected([]() {
+            Serial.println("USB Drive Disconnected!");
+            ui_usb_update_status(false, "");
+            currentUSBPath = "/";
+            currentFiles.clear();
+        });
+    } else {
+        Serial.println("Failed to initialize USB Host");
+    }
     
     /*Setup clock event handlers*/
     lv_obj_add_event_cb(ui_SetTimeBtn, setTimeButtonClicked, LV_EVENT_CLICKED, NULL);
@@ -451,6 +584,11 @@ void setup()
     /*Setup wake up screen event handlers*/
     lv_obj_add_event_cb(ui_SnoozeBtn, snoozeButtonClicked, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(ui_StopBtn, stopButtonClicked, LV_EVENT_CLICKED, NULL);
+    
+    /*Setup USB UI event handlers*/
+    lv_obj_add_event_cb(ui_USBRefreshBtn, usbRefreshClicked, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui_USBBackBtn, usbBackClicked, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui_USBFileList, usbFileSelected, LV_EVENT_CLICKED, NULL);
     
     /*Initialize displays*/
     updateClockDisplay();
@@ -503,5 +641,8 @@ void loop()
     
     // Handle alarm volume
     alarmVolume = lv_slider_get_value(ui_AlarmVolumeSlider);
+    
+    // Update USB Host
+    usbHost.update();
 
 }
