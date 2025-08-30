@@ -6,6 +6,9 @@
       "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/lvgl/**)",
       "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)",
       "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)",
+      "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)",
+      "Bash(arduino-cli:*)",
+      "Bash(export PATH=$PATH:/mnt/c/Users/vtjba/Documents/GitHub/M5Stack_Tab5_Arduino_Basic_LVGL_Demo/bin)",
       "Read(/mnt/c/Users/vtjba/Documents/Arduino/libraries/**)"
     ],
     "deny": [],

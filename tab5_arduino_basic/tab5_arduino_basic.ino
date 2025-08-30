@@ -48,6 +48,13 @@ M5GFX display;
 
 uint16_t count = 0;
 bool automate = false;
+
+// Clock variables
+uint8_t hours = 0;
+uint8_t minutes = 0;
+uint8_t seconds = 0;
+unsigned long lastSecondUpdate = 0;
+bool timeSettingPanelVisible = false;
  
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t *buf;
@@ -99,6 +106,39 @@ static void lv_indev_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 }
 
 
+void updateClockDisplay()
+{
+    char timeStr[12];  // Increased buffer size to handle max values safely
+    sprintf(timeStr, "%02d:%02d:%02d", hours, minutes, seconds);
+    lv_label_set_text(ui_ClockLabel, timeStr);
+}
+
+
+void setTimeButtonClicked(lv_event_t * e)
+{
+    timeSettingPanelVisible = !timeSettingPanelVisible;
+    if(timeSettingPanelVisible) {
+        lv_obj_clear_flag(ui_TimeSettingPanel, LV_OBJ_FLAG_HIDDEN);
+        lv_spinbox_set_value(ui_HourSpinbox, hours);
+        lv_spinbox_set_value(ui_MinuteSpinbox, minutes);
+        lv_spinbox_set_value(ui_SecondSpinbox, seconds);
+    } else {
+        lv_obj_add_flag(ui_TimeSettingPanel, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
+
+void applyTimeButtonClicked(lv_event_t * e)
+{
+    hours = lv_spinbox_get_value(ui_HourSpinbox);
+    minutes = lv_spinbox_get_value(ui_MinuteSpinbox);
+    seconds = lv_spinbox_get_value(ui_SecondSpinbox);
+    updateClockDisplay();
+    lv_obj_add_flag(ui_TimeSettingPanel, LV_OBJ_FLAG_HIDDEN);
+    timeSettingPanelVisible = false;
+}
+
+
 
 void setup()
 {
@@ -135,7 +175,14 @@ void setup()
 
     /*Start UI*/
     ui_init();   
-    display.setBrightness(255);  
+    display.setBrightness(255);
+    
+    /*Setup clock event handlers*/
+    lv_obj_add_event_cb(ui_SetTimeBtn, setTimeButtonClicked, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui_ApplyTimeBtn, applyTimeButtonClicked, LV_EVENT_CLICKED, NULL);
+    
+    /*Initialize clock display*/
+    updateClockDisplay();
 }
 
 
@@ -158,5 +205,24 @@ void loop()
 
     uint8_t brightness = lv_slider_get_value(ui_Slider1) ;
     display.setBrightness(brightness);
+    
+    // Update clock every second
+    unsigned long currentMillis = millis();
+    if (currentMillis - lastSecondUpdate >= 1000) {
+        lastSecondUpdate = currentMillis;
+        seconds++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++;
+                if (hours >= 24) {
+                    hours = 0;
+                }
+            }
+        }
+        updateClockDisplay();
+    }
 
 }

@@ -20,6 +20,15 @@ lv_obj_t * ui_Label3;
 lv_obj_t * ui_Spinner2;
 lv_obj_t * ui_Slider1;
 lv_obj_t * ui_Label4;
+lv_obj_t * ui_ClockLabel;
+lv_obj_t * ui_SetTimeBtn;
+lv_obj_t * ui_SetTimeBtnLabel;
+lv_obj_t * ui_HourSpinbox;
+lv_obj_t * ui_MinuteSpinbox;
+lv_obj_t * ui_SecondSpinbox;
+lv_obj_t * ui_TimeSettingPanel;
+lv_obj_t * ui_ApplyTimeBtn;
+lv_obj_t * ui_ApplyTimeBtnLabel;
 // CUSTOM VARIABLES
 
 // EVENTS

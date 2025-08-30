@@ -5,6 +5,18 @@
 
 #include "ui.h"
 
+static void spinbox_increment_event_cb(lv_event_t * e)
+{
+    lv_obj_t * spinbox = lv_event_get_user_data(e);
+    lv_spinbox_increment(spinbox);
+}
+
+static void spinbox_decrement_event_cb(lv_event_t * e)
+{
+    lv_obj_t * spinbox = lv_event_get_user_data(e);
+    lv_spinbox_decrement(spinbox);
+}
+
 void ui_Screen1_screen_init(void)
 {
     ui_Screen1 = lv_obj_create(NULL);
@@ -95,6 +107,134 @@ void ui_Screen1_screen_init(void)
     lv_label_set_text(ui_Label4, "Brightness");
     lv_obj_set_style_text_color(ui_Label4, lv_color_hex(0xDA88EA), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Label4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_ClockLabel = lv_label_create(ui_Screen1);
+    lv_obj_set_width(ui_ClockLabel, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui_ClockLabel, LV_SIZE_CONTENT);
+    lv_obj_set_x(ui_ClockLabel, -250);
+    lv_obj_set_y(ui_ClockLabel, -200);
+    lv_obj_set_align(ui_ClockLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ClockLabel, "00:00:00");
+    lv_obj_set_style_text_color(ui_ClockLabel, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_ClockLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ClockLabel, &ui_font_sevenSeg, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_SetTimeBtn = lv_btn_create(ui_Screen1);
+    lv_obj_set_width(ui_SetTimeBtn, 100);
+    lv_obj_set_height(ui_SetTimeBtn, 36);
+    lv_obj_set_x(ui_SetTimeBtn, -250);
+    lv_obj_set_y(ui_SetTimeBtn, -150);
+    lv_obj_set_align(ui_SetTimeBtn, LV_ALIGN_CENTER);
+    lv_obj_set_style_bg_color(ui_SetTimeBtn, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_SetTimeBtn, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_SetTimeBtn, lv_color_hex(0x919191), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_SetTimeBtn, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_SetTimeBtn, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_SetTimeBtnLabel = lv_label_create(ui_SetTimeBtn);
+    lv_obj_set_width(ui_SetTimeBtnLabel, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui_SetTimeBtnLabel, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui_SetTimeBtnLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_SetTimeBtnLabel, "Set Time");
+
+    ui_TimeSettingPanel = lv_obj_create(ui_Screen1);
+    lv_obj_set_width(ui_TimeSettingPanel, 320);
+    lv_obj_set_height(ui_TimeSettingPanel, 200);
+    lv_obj_set_x(ui_TimeSettingPanel, -250);
+    lv_obj_set_y(ui_TimeSettingPanel, 0);
+    lv_obj_set_align(ui_TimeSettingPanel, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_TimeSettingPanel, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_style_bg_color(ui_TimeSettingPanel, lv_color_hex(0x1A1A1A), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_TimeSettingPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_TimeSettingPanel, lv_color_hex(0x919191), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_TimeSettingPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_TimeSettingPanel, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_HourSpinbox = lv_spinbox_create(ui_TimeSettingPanel);
+    lv_spinbox_set_range(ui_HourSpinbox, 0, 23);
+    lv_spinbox_set_digit_format(ui_HourSpinbox, 2, 0);
+    lv_spinbox_step_prev(ui_HourSpinbox);
+    lv_obj_set_width(ui_HourSpinbox, 80);
+    lv_obj_set_height(ui_HourSpinbox, 50);
+    lv_obj_set_x(ui_HourSpinbox, -90);
+    lv_obj_set_y(ui_HourSpinbox, -20);
+    lv_obj_set_align(ui_HourSpinbox, LV_ALIGN_CENTER);
+    
+    lv_coord_t h = lv_obj_get_height(ui_HourSpinbox);
+    lv_obj_t * btn_up_h = lv_btn_create(ui_TimeSettingPanel);
+    lv_obj_set_size(btn_up_h, h, h/2);
+    lv_obj_align_to(btn_up_h, ui_HourSpinbox, LV_ALIGN_OUT_TOP_MID, 0, -5);
+    lv_obj_set_style_bg_img_src(btn_up_h, LV_SYMBOL_PLUS, 0);
+    lv_obj_add_event_cb(btn_up_h, spinbox_increment_event_cb, LV_EVENT_SHORT_CLICKED, ui_HourSpinbox);
+    lv_obj_add_event_cb(btn_up_h, spinbox_increment_event_cb, LV_EVENT_LONG_PRESSED_REPEAT, ui_HourSpinbox);
+    
+    lv_obj_t * btn_down_h = lv_btn_create(ui_TimeSettingPanel);
+    lv_obj_set_size(btn_down_h, h, h/2);
+    lv_obj_align_to(btn_down_h, ui_HourSpinbox, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
+    lv_obj_set_style_bg_img_src(btn_down_h, LV_SYMBOL_MINUS, 0);
+    lv_obj_add_event_cb(btn_down_h, spinbox_decrement_event_cb, LV_EVENT_SHORT_CLICKED, ui_HourSpinbox);
+    lv_obj_add_event_cb(btn_down_h, spinbox_decrement_event_cb, LV_EVENT_LONG_PRESSED_REPEAT, ui_HourSpinbox);
+
+    ui_MinuteSpinbox = lv_spinbox_create(ui_TimeSettingPanel);
+    lv_spinbox_set_range(ui_MinuteSpinbox, 0, 59);
+    lv_spinbox_set_digit_format(ui_MinuteSpinbox, 2, 0);
+    lv_spinbox_step_prev(ui_MinuteSpinbox);
+    lv_obj_set_width(ui_MinuteSpinbox, 80);
+    lv_obj_set_height(ui_MinuteSpinbox, 50);
+    lv_obj_set_x(ui_MinuteSpinbox, 0);
+    lv_obj_set_y(ui_MinuteSpinbox, -20);
+    lv_obj_set_align(ui_MinuteSpinbox, LV_ALIGN_CENTER);
+    
+    lv_obj_t * btn_up_m = lv_btn_create(ui_TimeSettingPanel);
+    lv_obj_set_size(btn_up_m, h, h/2);
+    lv_obj_align_to(btn_up_m, ui_MinuteSpinbox, LV_ALIGN_OUT_TOP_MID, 0, -5);
+    lv_obj_set_style_bg_img_src(btn_up_m, LV_SYMBOL_PLUS, 0);
+    lv_obj_add_event_cb(btn_up_m, spinbox_increment_event_cb, LV_EVENT_SHORT_CLICKED, ui_MinuteSpinbox);
+    lv_obj_add_event_cb(btn_up_m, spinbox_increment_event_cb, LV_EVENT_LONG_PRESSED_REPEAT, ui_MinuteSpinbox);
+    
+    lv_obj_t * btn_down_m = lv_btn_create(ui_TimeSettingPanel);
+    lv_obj_set_size(btn_down_m, h, h/2);
+    lv_obj_align_to(btn_down_m, ui_MinuteSpinbox, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
+    lv_obj_set_style_bg_img_src(btn_down_m, LV_SYMBOL_MINUS, 0);
+    lv_obj_add_event_cb(btn_down_m, spinbox_decrement_event_cb, LV_EVENT_SHORT_CLICKED, ui_MinuteSpinbox);
+    lv_obj_add_event_cb(btn_down_m, spinbox_decrement_event_cb, LV_EVENT_LONG_PRESSED_REPEAT, ui_MinuteSpinbox);
+
+    ui_SecondSpinbox = lv_spinbox_create(ui_TimeSettingPanel);
+    lv_spinbox_set_range(ui_SecondSpinbox, 0, 59);
+    lv_spinbox_set_digit_format(ui_SecondSpinbox, 2, 0);
+    lv_spinbox_step_prev(ui_SecondSpinbox);
+    lv_obj_set_width(ui_SecondSpinbox, 80);
+    lv_obj_set_height(ui_SecondSpinbox, 50);
+    lv_obj_set_x(ui_SecondSpinbox, 90);
+    lv_obj_set_y(ui_SecondSpinbox, -20);
+    lv_obj_set_align(ui_SecondSpinbox, LV_ALIGN_CENTER);
+    
+    lv_obj_t * btn_up_s = lv_btn_create(ui_TimeSettingPanel);
+    lv_obj_set_size(btn_up_s, h, h/2);
+    lv_obj_align_to(btn_up_s, ui_SecondSpinbox, LV_ALIGN_OUT_TOP_MID, 0, -5);
+    lv_obj_set_style_bg_img_src(btn_up_s, LV_SYMBOL_PLUS, 0);
+    lv_obj_add_event_cb(btn_up_s, spinbox_increment_event_cb, LV_EVENT_SHORT_CLICKED, ui_SecondSpinbox);
+    lv_obj_add_event_cb(btn_up_s, spinbox_increment_event_cb, LV_EVENT_LONG_PRESSED_REPEAT, ui_SecondSpinbox);
+    
+    lv_obj_t * btn_down_s = lv_btn_create(ui_TimeSettingPanel);
+    lv_obj_set_size(btn_down_s, h, h/2);
+    lv_obj_align_to(btn_down_s, ui_SecondSpinbox, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
+    lv_obj_set_style_bg_img_src(btn_down_s, LV_SYMBOL_MINUS, 0);
+    lv_obj_add_event_cb(btn_down_s, spinbox_decrement_event_cb, LV_EVENT_SHORT_CLICKED, ui_SecondSpinbox);
+    lv_obj_add_event_cb(btn_down_s, spinbox_decrement_event_cb, LV_EVENT_LONG_PRESSED_REPEAT, ui_SecondSpinbox);
+
+    ui_ApplyTimeBtn = lv_btn_create(ui_TimeSettingPanel);
+    lv_obj_set_width(ui_ApplyTimeBtn, 100);
+    lv_obj_set_height(ui_ApplyTimeBtn, 36);
+    lv_obj_set_x(ui_ApplyTimeBtn, 0);
+    lv_obj_set_y(ui_ApplyTimeBtn, 40);
+    lv_obj_set_align(ui_ApplyTimeBtn, LV_ALIGN_CENTER);
+
+    ui_ApplyTimeBtnLabel = lv_label_create(ui_ApplyTimeBtn);
+    lv_obj_set_width(ui_ApplyTimeBtnLabel, LV_SIZE_CONTENT);
+    lv_obj_set_height(ui_ApplyTimeBtnLabel, LV_SIZE_CONTENT);
+    lv_obj_set_align(ui_ApplyTimeBtnLabel, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_ApplyTimeBtnLabel, "Apply");
 
     lv_obj_add_event_cb(ui_Arc1, ui_event_Arc1, LV_EVENT_ALL, NULL);
 

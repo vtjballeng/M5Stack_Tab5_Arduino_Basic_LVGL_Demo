@@ -37,6 +37,15 @@ extern lv_obj_t * ui_Label3;
 extern lv_obj_t * ui_Spinner2;
 extern lv_obj_t * ui_Slider1;
 extern lv_obj_t * ui_Label4;
+extern lv_obj_t * ui_ClockLabel;
+extern lv_obj_t * ui_SetTimeBtn;
+extern lv_obj_t * ui_SetTimeBtnLabel;
+extern lv_obj_t * ui_HourSpinbox;
+extern lv_obj_t * ui_MinuteSpinbox;
+extern lv_obj_t * ui_SecondSpinbox;
+extern lv_obj_t * ui_TimeSettingPanel;
+extern lv_obj_t * ui_ApplyTimeBtn;
+extern lv_obj_t * ui_ApplyTimeBtnLabel;
 // CUSTOM VARIABLES
 
 // EVENTS
