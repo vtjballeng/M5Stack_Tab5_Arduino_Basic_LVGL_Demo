@@ -1,0 +1,19 @@
+# Arduino IDE Build Flags for M5Stack Tab5 Project
+# 
+# These flags ensure LVGL uses the project-level configuration
+#
+# For Arduino IDE:
+# Add these to your board's platform.txt or create a platform.local.txt
+# in your Arduino hardware folder
+#
+# For PlatformIO:
+# Add these to the build_flags section in platformio.ini
+
+-D LV_CONF_INCLUDE_SIMPLE
+-I {build.source.path}
+
+# Additional flags for ESP32-P4 optimization
+-D CONFIG_IDF_TARGET_ESP32P4
+-D BOARD_HAS_PSRAM
+-D ARDUINO_USB_MODE=1
+-D ARDUINO_USB_CDC_ON_BOOT=1

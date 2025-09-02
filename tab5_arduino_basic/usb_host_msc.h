@@ -36,11 +36,10 @@ private:
     USBDriveInfo current_drive;
     String mount_point;
     
+public:
     // Callbacks
     void (*onDriveConnected)(USBDriveInfo info);
     void (*onDriveDisconnected)();
-    
-public:
     USBHostMSC();
     ~USBHostMSC();
     

@@ -9,7 +9,7 @@ USB Drive UI Component Header
 extern "C" {
 #endif
 
-#include "lvgl.h"
+#include <lvgl.h>
 
 // USB UI objects
 extern lv_obj_t * ui_USBPanel;

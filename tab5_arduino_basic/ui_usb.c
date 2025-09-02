@@ -3,6 +3,7 @@ USB Drive UI Component
 Displays USB drive status and file browser
 */
 
+#include <stdio.h>
 #include "ui.h"
 #include "ui_helpers.h"
 

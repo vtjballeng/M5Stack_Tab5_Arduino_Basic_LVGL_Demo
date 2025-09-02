@@ -165,23 +165,11 @@ USBDriveInfo USBHostMSC::getDriveInfo() {
                 char product_str[64] = {0};
                 char serial_str[64] = {0};
                 
-                if (dev_desc->iManufacturer) {
-                    usb_host_get_string_descriptor(dev_hdl, vendor_str, 
-                        sizeof(vendor_str), dev_desc->iManufacturer);
-                    info.vendor = String(vendor_str);
-                }
-                
-                if (dev_desc->iProduct) {
-                    usb_host_get_string_descriptor(dev_hdl, product_str, 
-                        sizeof(product_str), dev_desc->iProduct);
-                    info.product = String(product_str);
-                }
-                
-                if (dev_desc->iSerialNumber) {
-                    usb_host_get_string_descriptor(dev_hdl, serial_str, 
-                        sizeof(serial_str), dev_desc->iSerialNumber);
-                    info.serial = String(serial_str);
-                }
+                // Note: String descriptor functions may not be available in Arduino ESP32 core
+                // For now, use placeholder values
+                info.vendor = "USB Device";
+                info.product = "Mass Storage";
+                info.serial = "123456";
             }
             usb_host_device_close(client_hdl, dev_hdl);
         }

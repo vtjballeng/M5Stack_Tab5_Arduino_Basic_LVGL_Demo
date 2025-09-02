@@ -10,12 +10,8 @@ ESP-Arduino >= V3.2 (tested also working with 3.3.0-alpha1)
 M5GFX >= V0.2.8
 LVGL = V8.3.11
 
-lv_conf.h:
-
-#define LV_COLOR_DEPTH 16
-#define LV_COLOR_16_SWAP 1
-#define LV_MEM_CUSTOM 1
-#define LV_TICK_CUSTOM 1
+Note: This project uses a project-level lv_conf.h configuration
+No library modifications required - just compile and upload!
 
 Build Options:
 
@@ -39,6 +35,10 @@ A Square Line Studio V1.5.1 project is included so that you can experiment with 
 
 
 
+// Set LVGL to use simple include before anything else
+#define LV_CONF_INCLUDE_SIMPLE 1
+
+// Include the headers
 #include <M5GFX.h>
 #include <M5Unified.h>
 #include <lvgl.h>

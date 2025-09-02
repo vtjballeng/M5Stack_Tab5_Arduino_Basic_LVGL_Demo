@@ -1,0 +1,13 @@
+{
+  "cpu": {
+    "fqbn": "esp32:esp32:esp32p4",
+    "name": "ESP32P4 Dev Module",
+    "type": "serial"
+  },
+  "secrets": [],
+  "included_libs": ["M5GFX", "M5Unified", "lvgl"],
+  "build_properties": {
+    "compiler.cpp.extra_flags": "-DLV_CONF_INCLUDE_SIMPLE -I{build.source.path}",
+    "compiler.c.extra_flags": "-DLV_CONF_INCLUDE_SIMPLE -I{build.source.path}"
+  }
+}
