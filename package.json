@@ -1,0 +1,28 @@
+{
+  "name": "m5stack-tab5-arduino-demo",
+  "version": "1.0.0",
+  "description": "M5Stack Tab5 Arduino LVGL Demo with USB Support",
+  "scripts": {
+    "lint": "npm run lint:md",
+    "lint:md": "markdownlint '**/*.md'",
+    "format": "npm run format:md",
+    "format:md": "markdownlint --fix '**/*.md'",
+    "check": "npm run lint"
+  },
+  "devDependencies": {
+    "markdownlint-cli": "^0.37.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/M5Stack_Tab5_Arduino_Basic_LVGL_Demo.git"
+  },
+  "keywords": [
+    "arduino",
+    "esp32",
+    "m5stack",
+    "lvgl",
+    "usb"
+  ],
+  "author": "",
+  "license": "MIT"
+}
