@@ -1,0 +1,16 @@
+# Clang-Format configuration for M5Stack Tab5 Arduino Project
+# Based on Google style with modifications for Arduino/LVGL
+
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 100
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBraces: Attach
+IndentCaseLabels: true
+PointerAlignment: Right
+SpaceAfterCStyleCast: true
+MaxEmptyLinesToKeep: 1
+SortIncludes: false
+AlignConsecutiveMacros: true

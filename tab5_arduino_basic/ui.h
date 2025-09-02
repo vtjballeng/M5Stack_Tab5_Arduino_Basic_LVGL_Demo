@@ -17,48 +17,48 @@ extern "C" {
 
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
-extern lv_obj_t * ui_Screen1;
-void ui_event_Arc1(lv_event_t * e);
-extern lv_obj_t * ui_Arc1;
-extern lv_obj_t * ui_Label1;
-extern lv_obj_t * ui_Button1;
-extern lv_obj_t * ui_Label2;
-extern lv_obj_t * ui_Label3;
-extern lv_obj_t * ui_Spinner2;
-extern lv_obj_t * ui_Slider1;
-extern lv_obj_t * ui_Label4;
-extern lv_obj_t * ui_ClockLabel;
-extern lv_obj_t * ui_SetTimeBtn;
-extern lv_obj_t * ui_SetTimeBtnLabel;
-extern lv_obj_t * ui_HourSpinbox;
-extern lv_obj_t * ui_MinuteSpinbox;
-extern lv_obj_t * ui_SecondSpinbox;
-extern lv_obj_t * ui_TimeSettingPanel;
-extern lv_obj_t * ui_ApplyTimeBtn;
-extern lv_obj_t * ui_ApplyTimeBtnLabel;
-extern lv_obj_t * ui_AlarmLabel;
-extern lv_obj_t * ui_AlarmTimeLabel;
-extern lv_obj_t * ui_AlarmSwitch;
-extern lv_obj_t * ui_SetAlarmBtn;
-extern lv_obj_t * ui_SetAlarmBtnLabel;
-extern lv_obj_t * ui_AlarmSettingPanel;
-extern lv_obj_t * ui_AlarmHourSpinbox;
-extern lv_obj_t * ui_AlarmMinuteSpinbox;
-extern lv_obj_t * ui_ApplyAlarmBtn;
-extern lv_obj_t * ui_ApplyAlarmBtnLabel;
-extern lv_obj_t * ui_AlarmVolumeSlider;
-extern lv_obj_t * ui_AlarmVolumeLabel;
-extern lv_obj_t * ui_WakeUpPanel;
-extern lv_obj_t * ui_WakeUpLabel;
-extern lv_obj_t * ui_SnoozeBtn;
-extern lv_obj_t * ui_SnoozeBtnLabel;
-extern lv_obj_t * ui_StopBtn;
-extern lv_obj_t * ui_StopBtnLabel;
+extern lv_obj_t* ui_Screen1;
+void ui_event_Arc1(lv_event_t* e);
+extern lv_obj_t* ui_Arc1;
+extern lv_obj_t* ui_Label1;
+extern lv_obj_t* ui_Button1;
+extern lv_obj_t* ui_Label2;
+extern lv_obj_t* ui_Label3;
+extern lv_obj_t* ui_Spinner2;
+extern lv_obj_t* ui_Slider1;
+extern lv_obj_t* ui_Label4;
+extern lv_obj_t* ui_ClockLabel;
+extern lv_obj_t* ui_SetTimeBtn;
+extern lv_obj_t* ui_SetTimeBtnLabel;
+extern lv_obj_t* ui_HourSpinbox;
+extern lv_obj_t* ui_MinuteSpinbox;
+extern lv_obj_t* ui_SecondSpinbox;
+extern lv_obj_t* ui_TimeSettingPanel;
+extern lv_obj_t* ui_ApplyTimeBtn;
+extern lv_obj_t* ui_ApplyTimeBtnLabel;
+extern lv_obj_t* ui_AlarmLabel;
+extern lv_obj_t* ui_AlarmTimeLabel;
+extern lv_obj_t* ui_AlarmSwitch;
+extern lv_obj_t* ui_SetAlarmBtn;
+extern lv_obj_t* ui_SetAlarmBtnLabel;
+extern lv_obj_t* ui_AlarmSettingPanel;
+extern lv_obj_t* ui_AlarmHourSpinbox;
+extern lv_obj_t* ui_AlarmMinuteSpinbox;
+extern lv_obj_t* ui_ApplyAlarmBtn;
+extern lv_obj_t* ui_ApplyAlarmBtnLabel;
+extern lv_obj_t* ui_AlarmVolumeSlider;
+extern lv_obj_t* ui_AlarmVolumeLabel;
+extern lv_obj_t* ui_WakeUpPanel;
+extern lv_obj_t* ui_WakeUpLabel;
+extern lv_obj_t* ui_SnoozeBtn;
+extern lv_obj_t* ui_SnoozeBtnLabel;
+extern lv_obj_t* ui_StopBtn;
+extern lv_obj_t* ui_StopBtnLabel;
 // CUSTOM VARIABLES
 
 // EVENTS
 
-extern lv_obj_t * ui____initial_actions0;
+extern lv_obj_t* ui____initial_actions0;
 
 // FONTS
 LV_FONT_DECLARE(ui_font_conthrax24);

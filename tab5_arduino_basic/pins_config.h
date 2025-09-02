@@ -1,4 +1,4 @@
-//pin assignments for Waveshare 1.8" amoled esp32-s3 module
+// pin assignments for Waveshare 1.8" amoled esp32-s3 module
 
 #pragma once
 
@@ -7,7 +7,6 @@
 //#define SPI_FREQUENCY         20000000 // at 40MHz we get artifacts when using software rotation
 //#define TFT_SPI_MODE          SPI_MODE0
 //#define TFT_SPI_HOST          SPI2_HOST
-
 
 // Display
 #define EXAMPLE_LCD_H_RES 720
@@ -21,12 +20,8 @@
 // #define TFT_QSPI_D3           7
 // #define TFT_QSPI_RST          -1 //done using port expander
 
-#define LVGL_LCD_BUF_SIZE     (EXAMPLE_LCD_H_RES * EXAMPLE_LCD_V_RES)
-#define SEND_BUF_SIZE         (EXAMPLE_LCD_H_RES * 10)
-
-
-
-
+#define LVGL_LCD_BUF_SIZE (EXAMPLE_LCD_H_RES * EXAMPLE_LCD_V_RES)
+#define SEND_BUF_SIZE     (EXAMPLE_LCD_H_RES * 10)
 
 // ES8311
 // #define I2S_MCK_IO 16
@@ -54,11 +49,5 @@
 // RTC
 //#define PCF8563_INT -1
 
-//IMU
+// IMU
 //#define IMU_INT -1
-
-
-
-
-
-

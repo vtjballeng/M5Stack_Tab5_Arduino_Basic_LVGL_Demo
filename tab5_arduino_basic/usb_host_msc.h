@@ -30,39 +30,39 @@ struct USBFileEntry {
 };
 
 class USBHostMSC {
-private:
+   private:
     bool initialized;
     bool drive_mounted;
     USBDriveInfo current_drive;
     String mount_point;
-    
-public:
+
+   public:
     // Callbacks
     void (*onDriveConnected)(USBDriveInfo info);
     void (*onDriveDisconnected)();
     USBHostMSC();
     ~USBHostMSC();
-    
+
     // Initialize USB Host
     bool begin();
     void end();
-    
+
     // Drive Management
     bool isDriveConnected();
     USBDriveInfo getDriveInfo();
-    
+
     // File Operations
     std::vector<USBFileEntry> listDirectory(const String& path);
     String readFile(const String& path);
     bool fileExists(const String& path);
     uint32_t getFileSize(const String& path);
-    
+
     // Callbacks
     void setOnDriveConnected(void (*callback)(USBDriveInfo));
     void setOnDriveDisconnected(void (*callback)());
-    
+
     // Update - call in loop
     void update();
 };
 
-#endif // USB_HOST_MSC_H
+#endif  // USB_HOST_MSC_H
